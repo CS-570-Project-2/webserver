@@ -1,5 +1,4 @@
-@import "@angular/material/theming";
-
+@use '@angular/material' as mat;
 // Improt the application's theme definitions
 @import 'theme/light-theme.scss';
 @import 'theme/dark-theme.scss';
@@ -9,16 +8,16 @@
 @import 'app/frame/footer/footer.theme.scss';
 @import 'app/frame/title/title.theme.scss';
 
-@include mat-core();
+@include mat.core();
 
 
 
 // Setup the application's default theme/light theme
-@include angular-material-theme($app-light-theme);
-@include frame-theme($app-light-theme);
-@include title-theme($app-light-theme);
-@include footer-theme($app-light-theme);
-$app-light-theme-config: mat-get-color-config($app-light-theme);
+@include mat.core-theme($app-light-theme);
+@include  frame-theme($app-light-theme);
+@include  title-theme($app-light-theme);
+@include  footer-theme($app-light-theme);
+$app-light-theme-config: mat.get-color-config($app-light-theme);
 $app-light-theme-primary: map-get($map: $app-light-theme-config, $key: primary);
 $app-light-theme-accent: map-get($map: $app-light-theme-config, $key: accent);
 $app-light-theme-warn: map-get($map: $app-light-theme-config, $key: warn);
@@ -49,24 +48,28 @@ mat-form-field {
 mat-from-field.no-wrapper {
     padding-bottom: 0px;
 }
+/* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.*/
 mat-form-field.no-wrapper .mat-form-field-wrapper {
     padding-bottom: 0px;
 }
-mat-card .mat-card-avatar {
+/* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version.*/
+mat-card .mat-mdc-card-avatar {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: mat-color($app-light-theme-primary, 800);
-    color: mat-contrast($app-light-theme-primary, 800);
+    background-color: map-get($app-light-theme-primary, 800);
+    color: map-get($app-light-theme-primary, '800-contrast');
 }
-mat-card.mat-card {
+/* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version.*/
+mat-card.mat-mdc-card {
     display: flex;
     flex-direction: column;
 }
-mat-card.mat-card mat-card-header {
+mat-card.mat-mdc-card mat-card-header {
     flex: 0 0 auto
 }
-mat-card.mat-card mat-card-header-text {
+/* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version.*/
+mat-card.mat-mdc-card mat-card-header-text {
     overflow: hidden;
 }
 mat-card .mat-card-header-text mat-card-title, mat-card-subtitle {
@@ -76,7 +79,7 @@ mat-card .mat-card-header-text mat-card-title, mat-card-subtitle {
 }
 
 .error {
-    .mat-simple-snackbar-action {
+    .mat-mdc-snack-bar-action {
         color: white !important;
     }
 }

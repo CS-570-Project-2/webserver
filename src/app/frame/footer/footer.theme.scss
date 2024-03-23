@@ -1,10 +1,12 @@
+@use '@angular/material' as mat;
+
 @mixin footer-color($config-or-theme) {
-    $config: mat-get-color-config($config-or-theme);
+    $config: mat.get-color-config($config-or-theme);
     $primary: map-get($config, primary);
 
     app-footer {
-        background-color: mat-color($primary);
-        color: mat-color($primary, default-contrast);
+        background-color: mat.get-color-from-palette($primary);
+        color: mat.get-color-from-palette($primary, default-contrast);
     }
 }
 
@@ -17,8 +19,8 @@
 }
 
 @mixin footer-theme($theme) {
-    $color: mat-get-color-config($theme);
-    $typography: mat-get-typography-config($theme);
+    $color: mat.get-color-config($theme);
+    $typography: mat.get-typography-config($theme);
 
     @if $color != null {
         @include footer-color($color);
