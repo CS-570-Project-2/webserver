@@ -68,10 +68,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "CS570:build:production"
+              "buildTarget": "CS570:build:production"
             },
             "development": {
-              "browserTarget": "CS570:build:development"
+              "buildTarget": "CS570:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -79,7 +79,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "CS570:build"
+            "buildTarget": "CS570:build"
           }
         },
         "test": {
