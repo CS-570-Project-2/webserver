@@ -1,0 +1,20 @@
+<mat-selection-list [multiple]="false" dense>
+    <mat-list-option disabled="true">
+        <div class="option">
+            <span>
+                <span><b>ASSIGNEMNT NAME</b></span>
+                <span><b>PART</b> </span>      
+            </span>
+            <mat-icon>keyboard_arrow_down</mat-icon>
+        </div>
+    </mat-list-option>
+    <mat-list-option (click)="goToTravelingSalesman()">
+        <div class="option">
+            <span>
+                <span><b>ٍِِِTraveling Salesman</b></span>
+                <span><b>Assignment</b> </span>      
+            </span>
+                <mat-icon>keyboard_arrow_right</mat-icon>
+        </div>
+    </mat-list-option>
+</mat-selection-list>

@@ -1,0 +1,8 @@
+mat-card {
+    box-sizing: border-box;
+    height: 100%;
+}
+
+mat-card-subtitle {
+    white-space: pre-wrap;
+}
