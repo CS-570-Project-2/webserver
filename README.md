@@ -33,7 +33,6 @@ To install the Angular CLI, open a terminal window and run the following command
 - If you wish to re-create the windows executable, navigate to the project directory, and delete *cs570.app* and *dist* folders and re-run the creation command.
 
 ## WE ARE LIVE!
-[CS403503 - Interpreters](https://cs570.herokuapp.com)
 
 
 ## Development server
