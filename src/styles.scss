@@ -1,6 +1,4 @@
-@import "~@angular/material/theming";
-
-@include mat-core();
+@import "@angular/material/theming";
 
 // Improt the application's theme definitions
 @import 'theme/light-theme.scss';
@@ -10,6 +8,10 @@
 @import 'app/frame/frame.theme.scss';
 @import 'app/frame/footer/footer.theme.scss';
 @import 'app/frame/title/title.theme.scss';
+
+@include mat-core();
+
+
 
 // Setup the application's default theme/light theme
 @include angular-material-theme($app-light-theme);
