@@ -2,15 +2,15 @@ import { NgModule } from "@angular/core";
 
 import { CommonModule } from "@angular/common";
 import { SharedModule } from "../shared";
-import { MatInputModule } from '@angular/material/input';
-import { MatTableModule } from '@angular/material/table';
-import { MatSelectModule } from '@angular/material/select';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input';
+import { MatLegacyTableModule as MatTableModule } from '@angular/material/legacy-table';
+import { MatLegacySelectModule as MatSelectModule } from '@angular/material/legacy-select';
+import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar';
 import { InterpreterRoutingModule } from "./travel-salesman-routing.module";
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatLegacySlideToggleModule as MatSlideToggleModule } from '@angular/material/legacy-slide-toggle';
 import { HttpClientModule } from '@angular/common/http';
 import { TravelSalesmanComponent } from "./travel-salesman.component";
-import {MatChipsModule} from '@angular/material/chips';
+import {MatLegacyChipsModule as MatChipsModule} from '@angular/material/legacy-chips';
 
 @NgModule({
     declarations: [
