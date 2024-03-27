@@ -88,7 +88,7 @@ export class TravelSalesmanComponent {
     let initVal: number;
     let window: number[][]= [];
     for (let i = 0; i < symmetricMat.length; i+=5) {
-      this.symmetricMat[i].slice(i ==0 ? i : i+1, symmetricMat.length).forEach((value) => {
+      this.symmetricMat[i].slice(i ==0 ? i : i+1, symmetricMat.length).sort((n1,n2) => n1 - n2).slice(0, 5).forEach((value) => {
          window = symmetricMat.slice(i, i+5);
         const nearestFive = this.nearestNeighbors([...window], [] ,value);
         totalNodes.push({city: nearestFive[0].value , total: nearestFive[nearestFive.length-1].total});

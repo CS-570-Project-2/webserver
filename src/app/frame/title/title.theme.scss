@@ -1,10 +1,12 @@
+@use '@angular/material' as mat;
+
 @mixin title-color($config-or-theme) {
-    $config: mat-get-color-config($config-or-theme);
+    $config: mat.get-color-config($config-or-theme);
     $warn: map-get($config, warn);
 
     app-title .deployment-chip {
-        background-color: mat-color($warn, 400);
-        color: mat-color($warn, '100-contrast');
+        background-color: mat.get-color-from-palette($warn, 400);
+        color: mat.get-color-from-palette($warn, '100-contrast');
     }
 }
 
@@ -21,8 +23,8 @@
 }
 
 @mixin title-theme($theme) {
-    $color: mat-get-color-config($theme);
-    $typography: mat-get-typography-config($theme);
+    $color: mat.get-color-config($theme);
+    $typography: mat.get-typography-config($theme);
 
     @if $color != null {
         @include title-color($color);

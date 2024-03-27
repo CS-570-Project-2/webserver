@@ -1,12 +1,13 @@
-$app-dark-primary: mat-palette($mat-deep-purple);
-$app-dark-accent: mat-palette($mat-amber, 600);
-$app-dark-warn: mat-palette($mat-red, A200);
-$app-dark-theme: mat-dark-theme(
-    (
-        color: (
-            primary: $app-dark-primary,
-            accent: $app-dark-accent,
-            warn: $app-dark-warn
-        ),
-    )
-);
+@use '@angular/material' as mat;
+
+$app-dark-primary: mat.define-palette(mat.$deep-purple-palette);
+$app-dark-accent: mat.define-palette(mat.$amber-palette, A200, A100, A400);
+$app-dark-warn: mat.define-palette(mat.$red-palette, A200);
+
+$app-dark-theme: mat.define-dark-theme((
+ color: (
+   primary: $app-dark-primary,
+   accent: $app-dark-accent,
+   warn: $app-dark-warn,
+ ),
+));

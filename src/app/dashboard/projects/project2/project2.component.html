@@ -1,0 +1,72 @@
+<mat-card appearance="outlined" class="main-card">
+    <mat-card-header>
+        <mat-card-title>Objective</mat-card-title>
+        <mat-card-subtitle>
+            <p>
+            The Paragraphs module in Drupal provides editors with a component driven architecture for building pages. 
+            Morpht has been developing Paragraph approaches to site building since 2015. This case study captures some 
+            of the content from a Drupal 7 "Paragraphs Demo" site which was built to showcase what could be done with Paragraphs.
+        </p>
+        </mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content class="container">
+        <mat-card class="input-card">
+            <mat-card-header>
+                <mat-card-subtitle>
+                    Input
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                    <mat-form-field>
+                        <textarea matInput type="text" placeholder=">" [(ngModel)]="textareaInputValue"></textarea>
+                    </mat-form-field>
+                    <span style="display: flex; margin-bottom: 15px; margin-top: 15px; align-items: center; justify-content: center;"><mat-divider style="width: 40%;"/>OR<mat-divider  style="width: 40%;"/></span>
+                    <input hidden #fileInput (change)="onFileSelected()" type="file" id="file"/>
+                    <button mat-raised-button color="primary" (click)="fileInput.click()" style="width: 100%;">Upload File</button>
+                    <mat-form-field style="margin-top: 40px;">
+                        <mat-label>
+                            Algorithm Selection
+                        </mat-label>
+                        <mat-select>
+                            @for (algorithm of algorithms; track algorithm) {
+                                <mat-option >{{algorithm}}</mat-option>
+                            }
+                          </mat-select>
+                    </mat-form-field>
+                    <div class="visual-controls">
+                        <label>Visualization Controls</label>
+
+                          @for (control of visualizationControls; track control) {
+                            <mat-checkbox class="example-radio-button" [value]="control">{{control}}</mat-checkbox>
+                          }
+                    </div>
+                </mat-card-content>
+
+        </mat-card>
+        <mat-card class="output-card">
+            <mat-card-header>
+                <mat-card-subtitle>
+                Output
+                </mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content class="output-content">
+                <mat-card>
+                    <mat-card-header>
+                        <mat-card-subtitle>Animation Panel</mat-card-subtitle>
+                    </mat-card-header>
+                    <mat-card-content></mat-card-content>
+                </mat-card>
+                <mat-card>
+                    <mat-card-header>
+                        <mat-card-subtitle>Final Output</mat-card-subtitle>
+                    </mat-card-header>
+                    <mat-card-content></mat-card-content>
+                </mat-card>
+            </mat-card-content>
+        </mat-card>
+
+    </mat-card-content>
+    <mat-card-actions>
+        <button mat-raised-button style="width: 50%;" color="primary">Run</button>
+    </mat-card-actions>
+  </mat-card>

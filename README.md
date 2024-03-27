@@ -1,6 +1,6 @@
-# CS403503 - Interpreters
+# CS570 - Algorithms
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 14.2.1.
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3.1.
 
 
 ## Getting Started
@@ -11,7 +11,8 @@ To install the Angular CLI, open a terminal window and run the following command
 
 ## Run (Default)
 - Navigate to the project folder.
-- Open a terminal and run the following command `npm run start-app`
+- Open a terminal and run `npm install`
+- After npm finish installing the packages you can run the following command to start the app `npm run start-app`
 - Open your browser and navigate to `http://localhost:4200/`
 
 ## Create windows executable

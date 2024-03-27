@@ -17,4 +17,7 @@ export class ProjectListComponent implements OnInit {
   goToTravelingSalesman () {
     this.navigation.viewTravelingSalesman();
   }
+  goToProject2 () {
+    this.navigation.viewProject2();
+  }
 }
