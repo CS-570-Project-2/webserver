@@ -13,7 +13,7 @@ const routes: Routes = [
       },
       {
         path: 'traveling-salesman',
-        loadChildren: () => import('./travel-salesman/travel-salesman.module').then(m => m.TravelSalesmanModule)
+        loadChildren: () => import('./dashboard/projects/travel-salesman/travel-salesman.module').then(m => m.TravelSalesmanModule)
       },
     ]
   }
