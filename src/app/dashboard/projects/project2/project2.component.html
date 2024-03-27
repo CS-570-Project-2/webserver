@@ -20,7 +20,10 @@
                     <mat-form-field>
                         <textarea matInput type="text" placeholder=">" [(ngModel)]="textareaInputValue"></textarea>
                     </mat-form-field>
-                    <mat-form-field>
+                    <span style="display: flex; margin-bottom: 15px; margin-top: 15px; align-items: center; justify-content: center;"><mat-divider style="width: 40%;"/>OR<mat-divider  style="width: 40%;"/></span>
+                    <input hidden #fileInput (change)="onFileSelected()" type="file" id="file"/>
+                    <button mat-raised-button color="primary" (click)="fileInput.click()" style="width: 100%;">Upload File</button>
+                    <mat-form-field style="margin-top: 40px;">
                         <mat-label>
                             Algorithm Selection
                         </mat-label>
@@ -30,19 +33,12 @@
                             }
                           </mat-select>
                     </mat-form-field>
-                    <span style="display: flex; margin-bottom: 15px; align-items: center;"><mat-divider style="width: 40%;"/>OR<mat-divider  style="width: 40%;"/></span>
-
-                    <input hidden #fileInput (change)="onFileSelected()" type="file" id="file"/>
-                    <button mat-raised-button color="primary" (click)="fileInput.click()" style="width: 100%;">Upload File</button>
                     <div class="visual-controls">
                         <label>Visualization Controls</label>
-                        <mat-radio-group
-                          class="radio-group"
-                          [(ngModel)]="visualizationControl">
+
                           @for (control of visualizationControls; track control) {
-                            <mat-radio-button class="example-radio-button" [value]="control">{{control}}</mat-radio-button>
+                            <mat-checkbox class="example-radio-button" [value]="control">{{control}}</mat-checkbox>
                           }
-                        </mat-radio-group>
                     </div>
                 </mat-card-content>
 
