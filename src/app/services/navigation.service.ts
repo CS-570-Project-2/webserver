@@ -16,4 +16,8 @@ export class NavigationService {
   viewTravelingSalesman() {
     this.store.dispatch(new Navigate(['/traveling-salesman']))
   }
+
+  viewProject2() {
+    this.store.dispatch(new Navigate(['/project2']))
+  }
 }
