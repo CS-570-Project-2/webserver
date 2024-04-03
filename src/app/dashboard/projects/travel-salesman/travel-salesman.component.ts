@@ -16,7 +16,11 @@ export class TravelSalesmanComponent {
   symmetricMat$ = this.symmetricMatSub.asObservable();
   dataSource$ = this.dataSoruceSub.asObservable();
   testCategories = [100, 1000];
-  algoCategories = [{label:'Nearest Neighbor', value: 'nearestNeighbor'}, {label:'Nearest Neighbor of Five', value: 'nearestNeighborOfFive'}]
+  algoCategories = [
+    {label:'Nearest Neighbor', value: 'nearestNeighbor'}, 
+    {label:'Nearest Neighbor of Five', value: 'nearestNeighborOfFive'},
+    {label:'Nearest Neighbor Without Swap', value: 'nearestNeighborWithoutSwap'},
+]
   selectedCat = 100;
   selectedAlgo = 'nearestNeighbor';
 
@@ -38,6 +42,10 @@ export class TravelSalesmanComponent {
         this.dataSoruceSub.next(this.nearestNeighbor());
         break;
 
+      case 'nearestNeighborWithoutSwap':
+        this.dataSoruceSub.next(this.nearestNeighborWithoutSwapping());
+        break;
+
       case 'nearestNeighborOfFive':
         this.dataSoruceSub.next(this.nearestNeighborOfFive());
         break;
@@ -56,6 +64,22 @@ export class TravelSalesmanComponent {
         const total = recordedRoutes.map((x) => x.value).reduce((total, value) => total + value, 0);
         recordedRoutes[recordedRoutes.length -1].total = total;
         this.swap(symmetricMatTemp, i, recordedRoutes.length -1);
+    })
+    this.symmetricMatSub.next(this.symmetricMat.map((ar) => ar.map((value, i) => `(${i} - ${value})`).toString().replace(/\,/gi, ' '))); 
+    return recordedRoutes;
+  }
+
+  /** Picks the nearest shortest route without swapping. */
+  nearestNeighborWithoutSwapping() {
+    const symmetricMatTemp = this.symmetricMat;
+    let recordedRoutes : Buffer[] = [];
+    let buffer :Buffer = new Buffer(0, 0, 0, 0);
+    symmetricMatTemp.forEach((m, i) => {
+        buffer.value = Math.min(...m.filter((prev) => !recordedRoutes.slice(0, recordedRoutes.length).map((buffer) => buffer.value).includes(prev)));
+        buffer.index = m.indexOf(buffer.value);
+        recordedRoutes.push(new Buffer(buffer.value, buffer.index, 0, i));
+        const total = recordedRoutes.map((x) => x.value).reduce((total, value) => total + value, 0);
+        recordedRoutes[recordedRoutes.length -1].total = total;
     })
     this.symmetricMatSub.next(this.symmetricMat.map((ar) => ar.map((value, i) => `(${i} - ${value})`).toString().replace(/\,/gi, ' '))); 
     return recordedRoutes;
