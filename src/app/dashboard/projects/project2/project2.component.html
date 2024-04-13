@@ -18,26 +18,35 @@
                 </mat-card-header>
                 <mat-card-content>
                     <mat-form-field>
-                        <textarea matInput type="text" placeholder=">" [(ngModel)]="textareaInputValue"></textarea>
-                    </mat-form-field>
-                    <span style="display: flex; margin-bottom: 15px; margin-top: 15px; align-items: center; justify-content: center;"><mat-divider style="width: 40%;"/>OR<mat-divider  style="width: 40%;"/></span>
-                    <input hidden #fileInput (change)="onFileSelected()" type="file" id="file"/>
-                    <button mat-raised-button color="primary" (click)="fileInput.click()" style="width: 100%;">Upload File</button>
-                    <mat-form-field style="margin-top: 40px;">
                         <mat-label>
                             Algorithm Selection
                         </mat-label>
-                        <mat-select>
+                        <mat-select [(value)]="selectedAlgorithm" (selectionChange)="selectedAlgorithmChanged($event.value.id)">
                             @for (algorithm of algorithms; track algorithm) {
-                                <mat-option >{{algorithm}}</mat-option>
+                                <mat-option [value]="algorithm">{{algorithm.label}}</mat-option>
                             }
                           </mat-select>
                     </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>
+                            File Selection
+                        </mat-label>
+                        <mat-select [(value)]="selectedGraph"  [disabled]="selectedAlgorithm == null">
+                            @for (graph of graphs; track graph) {
+                                <mat-option [value]="graph">{{graph.label}}</mat-option>
+                            }
+                          </mat-select>
+                    </mat-form-field>
+                    <mat-divider *ngIf="selectedGraph?.id === 'input'" style="width: 100%; margin-bottom: 20px;"/>
+                    <mat-form-field *ngIf="selectedGraph?.id === 'input'">
+                        <textarea matInput type="text" placeholder=">" [(ngModel)]="textareaInputValue"></textarea>
+                    </mat-form-field>
+
+
                     <div class="visual-controls">
                         <label>Visualization Controls</label>
-
                           @for (control of visualizationControls; track control) {
-                            <mat-checkbox class="example-radio-button" [value]="control">{{control}}</mat-checkbox>
+                            <mat-checkbox (change)="visualizationCheckboxChanged(control.id, $event.checked)">{{control.label}}</mat-checkbox>
                           }
                     </div>
                 </mat-card-content>
@@ -50,23 +59,38 @@
                 </mat-card-subtitle>
             </mat-card-header>
             <mat-card-content class="output-content">
+                <mat-form-field *ngIf="tasks$ | async as tasks">
+                    <mat-label>
+                        Task Selection
+                    </mat-label>
+                    <mat-select [(value)]="selectedTask" (selectionChange)="runTest()">
+                        @for (task of tasks; track task) {
+                            <mat-option [value]="task">{{task.algorithm.label}} - {{task.graph.label}}</mat-option>
+                        }
+                      </mat-select>
+                </mat-form-field>
                 <mat-card>
                     <mat-card-header>
                         <mat-card-subtitle>Animation Panel</mat-card-subtitle>
                     </mat-card-header>
-                    <mat-card-content></mat-card-content>
+                    <mat-card-content class="animation-conetent">
+                        <mat-spinner *ngIf="selectedTask?.isAnimationLoading"></mat-spinner>
+                    </mat-card-content>
                 </mat-card>
                 <mat-card>
                     <mat-card-header>
                         <mat-card-subtitle>Final Output</mat-card-subtitle>
                     </mat-card-header>
-                    <mat-card-content></mat-card-content>
+                    <mat-card-content class="visualization-conetent">
+                        <mat-spinner *ngIf="selectedTask?.isVisualizationLoading"></mat-spinner>
+                    </mat-card-content>
                 </mat-card>
             </mat-card-content>
         </mat-card>
 
     </mat-card-content>
     <mat-card-actions>
-        <button mat-raised-button style="width: 50%;" color="primary">Run</button>
+        <button mat-raised-button style="width: 50%;" [disabled]="selectedAlgorithm == null || selectedGraph == null" color="primary" (click)="run()">Run</button>
+        <button mat-raised-button style="width: 50%;" color="primary" (click)="runTest()">Run test</button>
     </mat-card-actions>
   </mat-card>
