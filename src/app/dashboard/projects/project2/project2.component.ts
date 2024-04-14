@@ -1,19 +1,20 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { SharedModule } from 'src/app/shared';
 import { TravelSalesmanRoutingModule } from '../travel-salesman/travel-salesman-routing.module';
 import { IMqttMessage, MqttService } from 'ngx-mqtt';
 import { OutputHandlingService } from 'src/app/services/output-handling.service';
 import { Guid } from 'guid-typescript';
-import { ITask, Project2Service } from './project2.service';
+import { ISelectedTask, Project2Service } from './project2.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { Subscription, map } from 'rxjs';
 
 @Component({
   selector: 'app-project2',
@@ -35,81 +36,106 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   styleUrl: './project2.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Project2Component implements OnInit { 
-  tasks$ = this.project2Service.tasks$;
+export class Project2Component implements OnInit, OnDestroy { 
+  project2Subscription: Subscription;
+  mqttObserveSubscription: Subscription;
 
+  /** Tasks state observable. */
+  tasks$ = this.project2Service.tasks$.pipe(map((tasks) => Object.keys(tasks).map(key => tasks[key])));
+
+  /** Selected fields and parameters. */
   textareaInputValue = '';
   selectedGraph!: {label: string, id: string};
   selectedAlgorithm!: {label: string, id: string};
-  selectedVisulazations: string[] = [];
-  selectedTask!: ITask;
+  selectedTask!: ISelectedTask;
 
-  visualizationControls = [
-    {label: 'Step By Step', id: 'stepByStep'}, 
-    {label: 'Final Output', id:'finalOutput'}
-  ];
+  /** Algorithem selection list. */
   algorithms = [
     {label:'Edmonds-Karp', id: 'EdmondsKarp'}, 
     {label: 'Ford Fulkerson', id: 'FordFulkerson'}, 
     {label: 'Hopcroft-Karp', id: 'HopcroftKarp'}, 
     {label: 'Hungarian', id:'Hungarian'}];
+
+  /** Graphs selection list. */
   graphs = [{label: 'Input', id:'input'}];
 
-  constructor(private _mqttService: MqttService, private alertService: OutputHandlingService, private project2Service: Project2Service) {
-    this._mqttService.observe('edmondsKarp').subscribe((message: IMqttMessage) => {
-      console.warn(message);
-    });
+  constructor(private _mqttService: MqttService, private cd: ChangeDetectorRef, private project2Service: Project2Service, private _snackBar: MatSnackBar) { }
+ 
+  ngOnDestroy(): void {
+    this.project2Subscription?.unsubscribe();
+    this.mqttObserveSubscription?.unsubscribe();
+    this.project2Service.deleteTasks();
   }
+  
   ngOnInit(): void {
+    // Connects to the MQTT WebSocket.
     this._mqttService.connect();
+
+    // Observes the Logs topic and update the tasks state.
+    this.mqttObserveSubscription = this._mqttService.observe('Logs').subscribe((observer: IMqttMessage) => {
+      const payload = observer.payload.toString().split(':');
+      const id = payload[0];
+      const status = payload[1];
+      if (status === "SERVER_TASK_FINISHED") {
+        this.project2Service.updateTaskAsComplete(id);
+      } else if (status === "SERVER_TASK_ERROR") {
+        this.clear();
+        this.cd.detectChanges();
+        this.project2Service.deleteTask(id);
+        this._snackBar.open(payload[2].replace(/-/g, ' '), 'Dismiss');
+      }
+    });
+
+    // Updates the selected task to the latest task.
+    this.project2Subscription = this.tasks$.subscribe((tasks) => this.selectedTask = tasks[tasks.length-1]);
   }
 
-  visualizationCheckboxChanged(visualization:string, checked: boolean) {
-    if (checked) {
-      this.selectedVisulazations.push(visualization);
-    } else {
-      this.selectedVisulazations = this.selectedVisulazations.filter((id) => id != visualization)
-    }
-  }
-
+  /**
+   * Changes the Graphs selection list based on the selected alogrithm.
+   * 
+   * @param algorithmId 
+   *    The alogrithm ID.
+   */
   selectedAlgorithmChanged(algorithmId: string) {
     this.selectedGraph = null;
     if (algorithmId === 'HopcroftKarp' || algorithmId === 'Hungarian') {
       this.graphs = [
         {label: 'Input', id: 'input'}, 
-        {label: 'Matching Problem 1', id: 'MatchProblem-1'},
-        {label: 'Matching Problem 2', id: 'MatchProblem-2'},
-        {label: 'Matching Problem 3', id: 'MatchProblem-3'},
+        {label: 'Matching Problem 1', id: 'MatchProblem-1.txt'},
+        {label: 'Matching Problem 2', id: 'MatchProblem-2.txt'},
+        {label: 'Matching Problem 3', id: 'MatchProblem-3.txt'},
       ];
     } else if (algorithmId === 'EdmondsKarp' || algorithmId === 'FordFulkerson') {
       this.graphs = [
         {label: 'Input', id: 'input'}, 
-        {label: 'Max Flow 1', id: 'MaxFlow-1'},
-        {label: 'Max Flow 2', id: 'MaxFlow-2'},
-        {label: 'Max Flow 3', id: 'MaxFlow-3'},
+        {label: 'Max Flow 1', id: 'MaxFlow-1.txtt'},
+        {label: 'Max Flow 2', id: 'MaxFlow-2.txt'},
+        {label: 'Max Flow 3', id: 'MaxFlow-3.txt'},
       ];
     }
   }
 
+  /**
+   * Publishes the selected parameters to the WebSocket and updates the tasks list.
+   */
   run() {
     const id = Guid.create();
     const parsedInput = this.textareaInputValue.replace(/\n/g, ',').replace(/\s/g, '-');
 
     if (this.selectedGraph.id === 'input') {
-      this._mqttService.publish(this.selectedAlgorithm.id, `${id}:CLIENT_TASK_INIT_FILE:${parsedInput}`).subscribe((observer) => {
-        this.project2Service.addTask(id, this.selectedAlgorithm, this.selectedGraph);
+      this._mqttService.publish(this.selectedAlgorithm.id, `${id}:CLIENT_TASK_INIT_RAW:${parsedInput}`).subscribe((observer) => {
+        this.project2Service.addTask(id.toString(), this.selectedAlgorithm, this.selectedGraph);
       });
     } else {
       this._mqttService.publish(this.selectedAlgorithm.id, `${id}:CLIENT_TASK_INIT_FILE:${this.selectedGraph.id}`).subscribe((observer) => {
-        this.project2Service.addTask(id, this.selectedAlgorithm, this.selectedGraph);
+        this.project2Service.addTask(id.toString(), this.selectedAlgorithm, this.selectedGraph);
       });
     }
-
-    
   }
 
-  runTest() {
-    this.selectedTask;
-    debugger;
+  clear() {
+    this.selectedAlgorithm = null;
+    this.selectedGraph = null;
+    this.selectedTask = null;
   }
 }

@@ -47,14 +47,6 @@
     margin: 15px 0;
     align-items: flex-start;
   }
-  .visual-controls {
-    margin-top: 15px;
-    >:first-child {
-      margin-bottom: 15px;
-    }
-    display: flex;
-    flex-direction: column;
-  }
 
   .animation-conetent {
     display: flex;

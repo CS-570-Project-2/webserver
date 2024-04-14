@@ -17,7 +17,7 @@ import { IMqttServiceOptions, MqttModule } from 'ngx-mqtt';
 
 export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
   hostname: 'localhost',
-  port: 8080,
+  port: 9002,
   path: '/mqtt',
   clean: true, // Retain session
   connectTimeout: 4000, // Timeout period

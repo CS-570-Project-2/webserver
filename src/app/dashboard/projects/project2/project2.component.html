@@ -22,14 +22,14 @@
                             Algorithm Selection
                         </mat-label>
                         <mat-select [(value)]="selectedAlgorithm" (selectionChange)="selectedAlgorithmChanged($event.value.id)">
-                            @for (algorithm of algorithms; track algorithm) {
+                            @for (algorithm of algorithms; track algorithm;) {
                                 <mat-option [value]="algorithm">{{algorithm.label}}</mat-option>
                             }
                           </mat-select>
                     </mat-form-field>
                     <mat-form-field>
                         <mat-label>
-                            File Selection
+                            Graph Selection
                         </mat-label>
                         <mat-select [(value)]="selectedGraph"  [disabled]="selectedAlgorithm == null">
                             @for (graph of graphs; track graph) {
@@ -41,14 +41,6 @@
                     <mat-form-field *ngIf="selectedGraph?.id === 'input'">
                         <textarea matInput type="text" placeholder=">" [(ngModel)]="textareaInputValue"></textarea>
                     </mat-form-field>
-
-
-                    <div class="visual-controls">
-                        <label>Visualization Controls</label>
-                          @for (control of visualizationControls; track control) {
-                            <mat-checkbox (change)="visualizationCheckboxChanged(control.id, $event.checked)">{{control.label}}</mat-checkbox>
-                          }
-                    </div>
                 </mat-card-content>
 
         </mat-card>
@@ -63,17 +55,21 @@
                     <mat-label>
                         Task Selection
                     </mat-label>
-                    <mat-select [(value)]="selectedTask" (selectionChange)="runTest()">
+                    <mat-select [(value)]="selectedTask" [disabled]="tasks.length < 1">
                         @for (task of tasks; track task) {
-                            <mat-option [value]="task">{{task.algorithm.label}} - {{task.graph.label}}</mat-option>
+                            <mat-option [value]="task">{{$index + 1}}: {{task.algorithm.label}} - {{task.graph.label}}</mat-option>
                         }
                       </mat-select>
                 </mat-form-field>
-                <mat-card>
+                <mat-card *ngIf="!selectedTask?.isAnimationAvailable == false">
                     <mat-card-header>
                         <mat-card-subtitle>Animation Panel</mat-card-subtitle>
                     </mat-card-header>
                     <mat-card-content class="animation-conetent">
+                        <video *ngIf="selectedTask?.isAnimationLoading === false" controls style="width: 100%; height: 100%;">
+                            <source [src]="selectedTask?.animationUrl" type="video/mp4">
+                            Video not supported.
+                        </video>
                         <mat-spinner *ngIf="selectedTask?.isAnimationLoading"></mat-spinner>
                     </mat-card-content>
                 </mat-card>
@@ -82,6 +78,7 @@
                         <mat-card-subtitle>Final Output</mat-card-subtitle>
                     </mat-card-header>
                     <mat-card-content class="visualization-conetent">
+                        <img [src]="selectedTask?.visualizationUrl" *ngIf="selectedTask?.isVisualizationLoading === false" style="width: 100%; height: 100%;">
                         <mat-spinner *ngIf="selectedTask?.isVisualizationLoading"></mat-spinner>
                     </mat-card-content>
                 </mat-card>
@@ -91,6 +88,6 @@
     </mat-card-content>
     <mat-card-actions>
         <button mat-raised-button style="width: 50%;" [disabled]="selectedAlgorithm == null || selectedGraph == null" color="primary" (click)="run()">Run</button>
-        <button mat-raised-button style="width: 50%;" color="primary" (click)="runTest()">Run test</button>
+        <button mat-raised-button style="width: 50%;" color="warn" (click)="clear()">Clear</button>
     </mat-card-actions>
   </mat-card>
