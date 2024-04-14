@@ -10,11 +10,12 @@ import { MatTableModule } from '@angular/material/table';
 import { SharedModule } from 'src/app/shared';
 import { TravelSalesmanRoutingModule } from '../travel-salesman/travel-salesman-routing.module';
 import { IMqttMessage, MqttService } from 'ngx-mqtt';
-import { OutputHandlingService } from 'src/app/services/output-handling.service';
 import { Guid } from 'guid-typescript';
 import { ISelectedTask, Project2Service } from './project2.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Subscription, map } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
+import { ImageDialogComponent } from 'src/app/shared/image-dialog/image-dialog.component';
 
 @Component({
   selector: 'app-project2',
@@ -41,7 +42,7 @@ export class Project2Component implements OnInit, OnDestroy {
   mqttObserveSubscription: Subscription;
 
   /** Tasks state observable. */
-  tasks$ = this.project2Service.tasks$.pipe(map((tasks) => Object.keys(tasks).map(key => tasks[key])));
+  tasks$ = this._project2Service.tasks$.pipe(map((tasks) => Object.keys(tasks).map(key => tasks[key])));
 
   /** Selected fields and parameters. */
   textareaInputValue = '';
@@ -57,14 +58,34 @@ export class Project2Component implements OnInit, OnDestroy {
     {label: 'Hungarian', id:'Hungarian'}];
 
   /** Graphs selection list. */
-  graphs = [{label: 'Input', id:'input'}];
+  graphs = [{label: 'User Input', id:'input'}];
 
-  constructor(private _mqttService: MqttService, private cd: ChangeDetectorRef, private project2Service: Project2Service, private _snackBar: MatSnackBar) { }
+  /**
+   * Creates a new instance of the project 2 component.
+   * 
+   * @param _mqttService 
+   *    The MQTT service.
+   * @param _changeDetector 
+   *    The change detector.
+   * @param _project2Service 
+   *    The project 2 state service.
+   * @param _snackBar 
+   *    Material Design snack bar service.
+   * @param _matDialog 
+   *    Material Design dialog service.
+   */
+  constructor(
+    private _mqttService: MqttService, 
+    private _changeDetector: ChangeDetectorRef, 
+    private _project2Service: Project2Service, 
+    private _snackBar: MatSnackBar,
+    private _matDialog: MatDialog
+  ) { }
  
   ngOnDestroy(): void {
     this.project2Subscription?.unsubscribe();
     this.mqttObserveSubscription?.unsubscribe();
-    this.project2Service.deleteTasks();
+    this._project2Service.deleteTasks();
   }
   
   ngOnInit(): void {
@@ -77,11 +98,11 @@ export class Project2Component implements OnInit, OnDestroy {
       const id = payload[0];
       const status = payload[1];
       if (status === "SERVER_TASK_FINISHED") {
-        this.project2Service.updateTaskAsComplete(id);
+        this._project2Service.updateTaskAsComplete(id);
       } else if (status === "SERVER_TASK_ERROR") {
         this.clear();
-        this.cd.detectChanges();
-        this.project2Service.deleteTask(id);
+        this._changeDetector.detectChanges();
+        this._project2Service.deleteTask(id);
         this._snackBar.open(payload[2].replace(/-/g, ' '), 'Dismiss');
       }
     });
@@ -100,15 +121,15 @@ export class Project2Component implements OnInit, OnDestroy {
     this.selectedGraph = null;
     if (algorithmId === 'HopcroftKarp' || algorithmId === 'Hungarian') {
       this.graphs = [
-        {label: 'Input', id: 'input'}, 
+        {label: 'User Input', id: 'input'}, 
         {label: 'Matching Problem 1', id: 'MatchProblem-1.txt'},
         {label: 'Matching Problem 2', id: 'MatchProblem-2.txt'},
         {label: 'Matching Problem 3', id: 'MatchProblem-3.txt'},
       ];
     } else if (algorithmId === 'EdmondsKarp' || algorithmId === 'FordFulkerson') {
       this.graphs = [
-        {label: 'Input', id: 'input'}, 
-        {label: 'Max Flow 1', id: 'MaxFlow-1.txtt'},
+        {label: 'User Input', id: 'input'}, 
+        {label: 'Max Flow 1', id: 'MaxFlow-1.txt'},
         {label: 'Max Flow 2', id: 'MaxFlow-2.txt'},
         {label: 'Max Flow 3', id: 'MaxFlow-3.txt'},
       ];
@@ -124,16 +145,38 @@ export class Project2Component implements OnInit, OnDestroy {
 
     if (this.selectedGraph.id === 'input') {
       this._mqttService.publish(this.selectedAlgorithm.id, `${id}:CLIENT_TASK_INIT_RAW:${parsedInput}`).subscribe((observer) => {
-        this.project2Service.addTask(id.toString(), this.selectedAlgorithm, this.selectedGraph);
+        this._project2Service.addTask(id.toString(), this.selectedAlgorithm, this.selectedGraph);
       });
     } else {
       this._mqttService.publish(this.selectedAlgorithm.id, `${id}:CLIENT_TASK_INIT_FILE:${this.selectedGraph.id}`).subscribe((observer) => {
-        this.project2Service.addTask(id.toString(), this.selectedAlgorithm, this.selectedGraph);
+        this._project2Service.addTask(id.toString(), this.selectedAlgorithm, this.selectedGraph);
       });
     }
   }
 
+  /**
+   * Opens the image dialog.
+   * 
+   * @param imageUrl 
+   *    The image URL.
+   * @param algorithmLabel 
+   *    The alogrithm label.
+   * @param graphLabel 
+   *    The graph label.
+   */
+  openDialog(imageUrl :string, algorithmLabel: string, graphLabel: string) {
+    this._matDialog.open(ImageDialogComponent, {
+      data: {
+        imageUrl: imageUrl,
+        algorithmLabel: algorithmLabel,
+        graphLabel: graphLabel
+      }
+    })
+  }
+
+  /** Clears all the input fields. */
   clear() {
+    this.textareaInputValue = '';
     this.selectedAlgorithm = null;
     this.selectedGraph = null;
     this.selectedTask = null;

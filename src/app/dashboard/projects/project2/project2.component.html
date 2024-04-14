@@ -78,7 +78,7 @@
                         <mat-card-subtitle>Final Output</mat-card-subtitle>
                     </mat-card-header>
                     <mat-card-content class="visualization-conetent">
-                        <img [src]="selectedTask?.visualizationUrl" *ngIf="selectedTask?.isVisualizationLoading === false" style="width: 100%; height: 100%;">
+                        <img (click)="openDialog(selectedTask?.visualizationUrl, selectedTask?.algorithm.label, selectedTask?.graph.label)" [src]="selectedTask?.visualizationUrl" *ngIf="selectedTask?.isVisualizationLoading === false" style="width: 100%; height: 100%;">
                         <mat-spinner *ngIf="selectedTask?.isVisualizationLoading"></mat-spinner>
                     </mat-card-content>
                 </mat-card>
