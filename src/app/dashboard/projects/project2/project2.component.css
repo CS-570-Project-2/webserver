@@ -47,12 +47,20 @@
     margin: 15px 0;
     align-items: flex-start;
   }
-  .visual-controls {
-    margin-top: 15px;
-    >:first-child {
-      margin-bottom: 15px;
-    }
+
+  .animation-conetent {
     display: flex;
-    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .visualization-conetent {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  img {
+    cursor: pointer;
   }
 }

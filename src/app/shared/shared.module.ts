@@ -8,7 +8,7 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatDialogModule } from '@angular/material/dialog';
+import { MatDialogActions, MatDialogClose, MatDialogContent, MatDialogModule, MatDialogTitle } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatGridListModule } from '@angular/material/grid-list';
@@ -26,11 +26,20 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { ImageDialogComponent } from "./image-dialog/image-dialog.component";
 
 
 @NgModule({
+    declarations: [
+        ImageDialogComponent,
+    ],
     imports: [
-        CommonModule
+        CommonModule,
+        MatDialogTitle,
+        MatDialogContent,
+        MatDialogActions, 
+        MatDialogClose,
+        MatButtonModule
     ],
     exports: [
         // Common Angular dependencies
@@ -64,6 +73,11 @@ import { MatToolbarModule } from '@angular/material/toolbar';
         MatTableModule,
         MatTabsModule,
         MatToolbarModule,
+        MatDialogTitle,
+        MatDialogContent,
+
+        // Shared components
+        ImageDialogComponent
     ]
 })
 export class SharedModule {}

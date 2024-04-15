@@ -13,7 +13,16 @@ import { NgxsModule } from '@ngxs/store';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { HttpClientModule } from '@angular/common/http';
+import { IMqttServiceOptions, MqttModule } from 'ngx-mqtt';
 
+export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
+  hostname: 'localhost',
+  port: 9002,
+  path: '/mqtt',
+  clean: true, // Retain session
+  connectTimeout: 4000, // Timeout period
+  reconnectPeriod: 4000, // Reconnect period
+  protocol: 'ws',};
 
 @NgModule({
   declarations: [
@@ -32,7 +41,8 @@ import { HttpClientModule } from '@angular/common/http';
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: environment.production
     }),
-    HttpClientModule
+    HttpClientModule,
+    MqttModule.forRoot(MQTT_SERVICE_OPTIONS)
   ],
   bootstrap: [AppComponent]
 })

@@ -3,10 +3,14 @@
         <mat-card-title>Objective</mat-card-title>
         <mat-card-subtitle>
             <p>
-            The Paragraphs module in Drupal provides editors with a component driven architecture for building pages. 
-            Morpht has been developing Paragraph approaches to site building since 2015. This case study captures some 
-            of the content from a Drupal 7 "Paragraphs Demo" site which was built to showcase what could be done with Paragraphs.
-        </p>
+            Our website project aims to provide users with an interactive platform for visualizing and 
+            understanding the steps involved in both the max flow and bipartite algorithms. 
+            Users can easily navigate through the animation steps, enabling or disabling visualization 
+            as per their preference. Whether users aim to obtain the final output or simply visualize the 
+            process, they have the flexibility to tailor their experience accordingly. Additionally, users 
+            have the option to either upload input files or input data directly into the provided input box, 
+            ensuring convenience and ease of use.
+            </p>
         </mat-card-subtitle>
     </mat-card-header>
     <mat-card-content class="container">
@@ -18,28 +22,29 @@
                 </mat-card-header>
                 <mat-card-content>
                     <mat-form-field>
-                        <textarea matInput type="text" placeholder=">" [(ngModel)]="textareaInputValue"></textarea>
-                    </mat-form-field>
-                    <span style="display: flex; margin-bottom: 15px; margin-top: 15px; align-items: center; justify-content: center;"><mat-divider style="width: 40%;"/>OR<mat-divider  style="width: 40%;"/></span>
-                    <input hidden #fileInput (change)="onFileSelected()" type="file" id="file"/>
-                    <button mat-raised-button color="primary" (click)="fileInput.click()" style="width: 100%;">Upload File</button>
-                    <mat-form-field style="margin-top: 40px;">
                         <mat-label>
                             Algorithm Selection
                         </mat-label>
-                        <mat-select>
-                            @for (algorithm of algorithms; track algorithm) {
-                                <mat-option >{{algorithm}}</mat-option>
+                        <mat-select [(value)]="selectedAlgorithm" (selectionChange)="selectedAlgorithmChanged($event.value.id)">
+                            @for (algorithm of algorithms; track algorithm;) {
+                                <mat-option [value]="algorithm">{{algorithm.label}}</mat-option>
                             }
                           </mat-select>
                     </mat-form-field>
-                    <div class="visual-controls">
-                        <label>Visualization Controls</label>
-
-                          @for (control of visualizationControls; track control) {
-                            <mat-checkbox class="example-radio-button" [value]="control">{{control}}</mat-checkbox>
-                          }
-                    </div>
+                    <mat-form-field>
+                        <mat-label>
+                            Graph Selection
+                        </mat-label>
+                        <mat-select [(value)]="selectedGraph"  [disabled]="selectedAlgorithm == null">
+                            @for (graph of graphs; track graph) {
+                                <mat-option [value]="graph">{{graph.label}}</mat-option>
+                            }
+                          </mat-select>
+                    </mat-form-field>
+                    <mat-divider *ngIf="selectedGraph?.id === 'input'" style="width: 100%; margin-bottom: 20px;"/>
+                    <mat-form-field *ngIf="selectedGraph?.id === 'input'">
+                        <textarea matInput type="text" placeholder=">" [(ngModel)]="textareaInputValue"></textarea>
+                    </mat-form-field>
                 </mat-card-content>
 
         </mat-card>
@@ -50,23 +55,42 @@
                 </mat-card-subtitle>
             </mat-card-header>
             <mat-card-content class="output-content">
-                <mat-card>
+                <mat-form-field *ngIf="tasks$ | async as tasks">
+                    <mat-label>
+                        Task Selection
+                    </mat-label>
+                    <mat-select [(value)]="selectedTask" [disabled]="tasks.length < 1">
+                        @for (task of tasks; track task) {
+                            <mat-option [value]="task">{{$index + 1}}: {{task.algorithm.label}} - {{task.graph.label}}</mat-option>
+                        }
+                      </mat-select>
+                </mat-form-field>
+                <mat-card *ngIf="!selectedTask?.isAnimationAvailable == false">
                     <mat-card-header>
                         <mat-card-subtitle>Animation Panel</mat-card-subtitle>
                     </mat-card-header>
-                    <mat-card-content></mat-card-content>
+                    <mat-card-content class="animation-conetent">
+                        <video *ngIf="selectedTask?.isAnimationLoading === false" style="width: 100%; height: 100%;"
+                        autoplay loop muted playsinline="true" webkit-playsinline="true" [src]="selectedTask?.animationUrl" type="video/mp4" controls>                            
+                        </video>
+                        <mat-spinner *ngIf="selectedTask?.isAnimationLoading"></mat-spinner>
+                    </mat-card-content>
                 </mat-card>
                 <mat-card>
                     <mat-card-header>
                         <mat-card-subtitle>Final Output</mat-card-subtitle>
                     </mat-card-header>
-                    <mat-card-content></mat-card-content>
+                    <mat-card-content class="visualization-conetent">
+                        <img (click)="openDialog(selectedTask?.visualizationUrl, selectedTask?.algorithm.label, selectedTask?.graph.label)" [src]="selectedTask?.visualizationUrl" *ngIf="selectedTask?.isVisualizationLoading === false" style="width: 100%; height: 100%;">
+                        <mat-spinner *ngIf="selectedTask?.isVisualizationLoading"></mat-spinner>
+                    </mat-card-content>
                 </mat-card>
             </mat-card-content>
         </mat-card>
 
     </mat-card-content>
     <mat-card-actions>
-        <button mat-raised-button style="width: 50%;" color="primary">Run</button>
+        <button mat-raised-button style="width: 50%;" [disabled]="selectedAlgorithm == null || selectedGraph == null" color="primary" (click)="run()">Run</button>
+        <button mat-raised-button style="width: 50%;" color="warn" (click)="clear()">Clear</button>
     </mat-card-actions>
   </mat-card>
