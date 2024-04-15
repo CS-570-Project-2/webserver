@@ -51,11 +51,13 @@
   .animation-conetent {
     display: flex;
     justify-content: center;
+    align-items: center;
   }
   
   .visualization-conetent {
     display: flex;
     justify-content: center;
+    align-items: center;
   }
 
   img {

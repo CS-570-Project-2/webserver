@@ -70,9 +70,8 @@
                         <mat-card-subtitle>Animation Panel</mat-card-subtitle>
                     </mat-card-header>
                     <mat-card-content class="animation-conetent">
-                        <video *ngIf="selectedTask?.isAnimationLoading === false" controls style="width: 100%; height: 100%;">
-                            <source [src]="selectedTask?.animationUrl" type="video/mp4">
-                            Video not supported.
+                        <video *ngIf="selectedTask?.isAnimationLoading === false" style="width: 100%; height: 100%;"
+                        autoplay loop muted playsinline="true" webkit-playsinline="true" [src]="selectedTask?.animationUrl" type="video/mp4" controls>                            
                         </video>
                         <mat-spinner *ngIf="selectedTask?.isAnimationLoading"></mat-spinner>
                     </mat-card-content>
