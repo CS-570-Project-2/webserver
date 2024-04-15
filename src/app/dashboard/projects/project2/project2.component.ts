@@ -103,7 +103,7 @@ export class Project2Component implements OnInit, OnDestroy {
         this.clear();
         this._changeDetector.detectChanges();
         this._project2Service.deleteTask(id);
-        this._snackBar.open(payload[2].replace(/-/g, ' '), 'Dismiss');
+        this._snackBar.open(payload[2].replace(/-/g, ' '), 'Dismiss')._dismissAfter(7000);
       }
     });
 
@@ -122,9 +122,9 @@ export class Project2Component implements OnInit, OnDestroy {
     if (algorithmId === 'HopcroftKarp' || algorithmId === 'Hungarian') {
       this.graphs = [
         {label: 'User Input', id: 'input'}, 
-        {label: 'Matching Problem 1', id: 'MatchProblem-1.txt'},
-        {label: 'Matching Problem 2', id: 'MatchProblem-2.txt'},
-        {label: 'Matching Problem 3', id: 'MatchProblem-3.txt'},
+        {label: 'Matching Problem 1', id: 'Matching-1.txt'},
+        {label: 'Matching Problem 2', id: 'Matching-2.txt'},
+        {label: 'Matching Problem 3', id: 'Matching-3.txt'},
       ];
     } else if (algorithmId === 'EdmondsKarp' || algorithmId === 'FordFulkerson') {
       this.graphs = [
