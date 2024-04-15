@@ -52,14 +52,12 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    max-height: 50%;
   }
   
   .visualization-conetent {
     display: flex;
     justify-content: center;
     align-items: center;
-    max-height: 50%;
   }
 
   img {
