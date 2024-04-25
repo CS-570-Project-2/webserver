@@ -33,14 +33,23 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 })
 export class MaxCliqueComponent { 
 
+  /** Test graphs catigories */
   testCatigories: string[] = [
     'D5G1000', 'D8G700', 'D11G400', 'D14G100', 'Q15V100', 'Q30V400', 'Q45V700', 'Q60V1000'
   ];
+
+  /** Selected Graph. */
   selectedCat: string;
+
+  /** Agorithems list. */
   algoCatigories: string[] = [
     'Greedy Approach', 'Brute Force', 'Inverse Graph'
   ];
+
+  /** Selected Algorithm. */
   selectedAlgoCat: string = 'Greedy Approach';
+
+  /** Selected Graph with initial value for testing. */
   graph: Map<string, string[]> =  new Map([
     ["1", ["2", "3"]],
     ["2", ["1", "3", "4"]],
@@ -48,6 +57,8 @@ export class MaxCliqueComponent {
     ["4", ["2", "3", "5"]],
     ["5", ["3", "4"]],
   ]);
+
+  /** Final result to be displayed. */
   maxClique: string[] = [];
 
   constructor(private httpClient: HttpClient) {
@@ -68,10 +79,16 @@ export class MaxCliqueComponent {
       }
     }
 
+    /**
+     * Reformats the graph.
+     */
     graphChanged() {
       this.init();
     }
 
+    /**
+     * Runs the selected algorithm.
+     */
     run() {
       switch (this.selectedAlgoCat) {
         case 'Greedy Approach':
@@ -88,6 +105,9 @@ export class MaxCliqueComponent {
       }
     }
 
+    /**
+     * Clears selected fields.
+     */
     clear() {
       this.maxClique = [];
       this.selectedCat = null;
@@ -157,6 +177,16 @@ export class MaxCliqueComponent {
     return maxClique;
   }
 
+  /**
+    Takes a graph as input.
+    Converts graph keys (vertices) to an array vertices.
+    Initializes maxClique as an empty array.
+    Iterates while there are unselected vertices:
+    Finds the vertex with the most connections to unselected vertices in the current pool.
+    Adds the vertex to the maxClique.
+    Removes the vertex and its neighbors from the remaining candidate vertices.
+    Returns the array containing the vertices in the maximum clique found using the greedy approach.
+   */
    findMaxCliqueGreedy(graph: Map<string, string[]>): string[] {
     const vertices = Array.from(graph.keys());
     const maxClique: string[] = [];
