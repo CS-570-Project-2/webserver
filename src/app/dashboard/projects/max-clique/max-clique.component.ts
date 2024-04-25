@@ -109,11 +109,11 @@ export class MaxCliqueComponent {
     const vertices = Array.from(graph.keys());
     let maxClique: string[] = [];
     for (let i = 1; i <= vertices.length; i++) {
-      for (const subset of this.getCombinations(vertices, i)) {
-        if (this.isClique(graph, subset) && subset.length > maxClique.length) {
-          maxClique = subset;
-        }
-      }
+        this.getCombinations(vertices, i).forEach((subset) => {
+          if (this.isClique(graph, subset) && subset.length > maxClique.length) {
+            maxClique = subset;
+          }
+        })
     }
     return maxClique;
   }
@@ -133,25 +133,26 @@ export class MaxCliqueComponent {
   
     // Generate all possible subsets of vertices.
     for (let i = 1; i <= vertices.length; i++) {
-      for (const subset of this.getCombinations(vertices, i)) {
+        this.getCombinations(vertices, i).forEach((subset) => {
         // Create a sub-graph induced by the subset.
         const subGraph = new Map();
-        for (const vertex of subset) {
-          subGraph.set(vertex, []);
-        }
-        for (const vertex1 of subset) {
-          for (const vertex2 of subset) {
-            if (vertex1 !== vertex2 && !graph.get(vertex1)?.includes(vertex2)) {
-              subGraph.get(vertex1)?.push(vertex2);
-            }
-          }
-        }
+          subset.forEach((vertex) => {
+            subGraph.set(vertex, []);
+          });
+          subset.forEach((vertex1) => {
+              subset.forEach((vertex2) => {
+                if (vertex1 !== vertex2 && !graph.get(vertex1)?.includes(vertex2)) {
+                  subGraph.get(vertex1)?.push(vertex2);
+                }
+              });
+          });   
   
         // Check if the sub-graph is a clique.
         if (this.isClique(subGraph, subset) && subset.length > maxClique.length) {
           maxClique = subset;
         }
-      }
+        });
+
     }
     return maxClique;
   }
@@ -164,13 +165,13 @@ export class MaxCliqueComponent {
       // Find vertex with most connections to unselected vertices.
       let maxConnectedVertex = vertices[0];
       let maxConnections = 0;
-      for (const vertex of vertices) {
-        const connections = graph.get(vertex)?.filter(v => vertices.includes(v)).length || 0;
-        if (connections > maxConnections) {
-          maxConnectedVertex = vertex;
-          maxConnections = connections;
-        }
-      }
+        vertices.forEach((vertex) => {
+          const connections = graph.get(vertex)?.filter(v => vertices.includes(v)).length || 0;
+          if (connections > maxConnections) {
+            maxConnectedVertex = vertex;
+            maxConnections = connections;
+          }
+        });
   
       // Add the vertex to the clique and remove its neighbors from remaining vertices.
       maxClique.push(maxConnectedVertex);
@@ -192,14 +193,15 @@ export class MaxCliqueComponent {
     Returns true if all neighbors are present, indicating a clique; false otherwise.
    */
     isClique(graph: Map<string, string[]>, subset: string[]): boolean {
-      for (const vertex of subset) {
-        for (const neighbor of graph.get(vertex) || []) {
-          if (!subset.includes(neighbor)) {
-            return false;
-          }
-        }
-      }
-      return true;
+      let returnValue = true;
+        subset.forEach((vertex) => {
+            (graph.get(vertex) || []).forEach((neighbor) => {
+              if (!subset.includes(neighbor)) {
+                returnValue = false;
+              }
+            });
+        });
+      return returnValue;
     }
 
 
