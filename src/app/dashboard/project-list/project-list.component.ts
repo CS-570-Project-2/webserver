@@ -20,4 +20,7 @@ export class ProjectListComponent implements OnInit {
   goToProject2 () {
     this.navigation.viewProject2();
   }
+  goToMaxClique () {
+    this.navigation.viewMaxClique();
+  }
 }

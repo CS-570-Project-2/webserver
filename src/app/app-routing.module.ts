@@ -19,6 +19,10 @@ const routes: Routes = [
         path: 'project2',
         loadComponent: () => import('./dashboard/projects/project2/project2.component').then(m => m.Project2Component)
       },
+      {
+        path: 'max-clique',
+        loadComponent: () => import('./dashboard/projects/max-clique/max-clique.component').then(m => m.MaxCliqueComponent)
+      },
     ]
   }
 ];

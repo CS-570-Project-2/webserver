@@ -20,4 +20,8 @@ export class NavigationService {
   viewProject2() {
     this.store.dispatch(new Navigate(['/project2']))
   }
+
+  viewMaxClique() {
+    this.store.dispatch(new Navigate(['/max-clique']))
+  }
 }
